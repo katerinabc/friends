@@ -1,4 +1,4 @@
-import { QuoteGenerator } from '@/components/QuoteGenerator';
+import { FeedGenerator } from '@/components/FeedGenerator';
 
 export const metadata = {
   title: 'My Friends Feed',
@@ -24,7 +24,7 @@ export const metadata = {
 export default function Home() {
   return (
     <main>
-      <QuoteGenerator />
+      <FeedGenerator />
       </main>
   );
 }
