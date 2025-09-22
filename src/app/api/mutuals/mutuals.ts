@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AxiosResponse } from 'axios';
-import { ReciprocalResponse, ReciprocalFollower } from '../../../types/cast';
+import { ReciprocalResponse } from '../../../types/cast';
 
 export class FetchReciprocals {
     private readonly apiKey: string;
