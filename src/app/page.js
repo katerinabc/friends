@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import { FeedGenerator } from '@/components/FeedGenerator';
 
 export const metadata = {
@@ -24,6 +25,9 @@ export const metadata = {
 export default function Home() {
   return (
     <main>
+      <nav style={{ marginTop: 12 }}>
+          <Link href="/circle">Set up Friends</Link>
+      </nav>
       <FeedGenerator />
       </main>
   );

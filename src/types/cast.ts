@@ -1,4 +1,15 @@
 // Types for API responses
+export interface ReciprocalFollower {
+    object: 'reciprocal_follower';
+    user: Author;
+    timestamp: string;
+  }
+  
+  export interface ReciprocalResponse {
+    users: ReciprocalFollower[];
+    next?: { cursor?: string };
+  }
+
 export interface Author {
     object: 'user';
     fid: number;

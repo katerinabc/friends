@@ -8,7 +8,7 @@ import { useRef } from 'react';
 type Feed = { text: string; author: string; imageUrls?: string[] }
 
 export function FeedGenerator() {
-  const [currentFeed, setCurrentFeed] = useState<Feed | null>(null);
+  const [feeds, setFeeds] = useState<Feed[]>([]);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [username, setUsername] = useState('');
@@ -33,7 +33,8 @@ export function FeedGenerator() {
       const data = await response.json();
       console.log('neynar response', data)
 
-      setCurrentFeed({ text: data.text, author: data.author, imageUrls: data.imageUrls })
+      const items: Feed[] = Array.isArray(data?.items) ? data.items : [];
+      setFeeds(items);
       setIsAnimating(false); //what does this do?
       setIsLoading(false); //what does this do?
       
@@ -60,6 +61,7 @@ export function FeedGenerator() {
     // Get user context from Farcaster
     const getUser = async () => {
       try {
+        // await sdk.ready();
         const context = await sdk.context;
         if (context && context.user) {
           setUsername(context.user.username || context.user.displayName || 'friend');
@@ -78,45 +80,71 @@ export function FeedGenerator() {
   useEffect(() => {
 
     if (fid == null) return; //exists effect early until fid is set
+    // gate: require circle selection
+    try {
+      const key = `circle:${fid}`;
+      const raw = typeof window !== 'undefined' ? window.localStorage.getItem(key) : null;
+      const arr = raw ? JSON.parse(raw) : [];
+      const selected: number[] = Array.isArray(arr) ? arr : [];
+      if (!selected || selected.length === 0) {
+        // no circle set → do not fetch, show hint
+        return;
+      }
+    } catch (e) {
+      // if parsing fails, skip fetch
+      return;
+    }
+
     const url = `/api/feeds?fid=${fid}`;
     fetchFeed(url);
   }, [fid]);
 
-  // scroll after feed is set to see more data. runs when currentFeed changes
+  // scroll after feed is set to see more data. runs when feeds changes
   useEffect(() => {
-    if (!currentFeed) return; // exists effect early when no currentFeed
+    if (!feeds || feeds.length === 0) return; // exists effect early when no feeds
     containerRef.current?.scrollIntoView({behavior: 'smooth'});
-  }, [currentFeed])
+  }, [feeds])
 
-  if (!currentFeed && !isLoading) return "nothing is happening here";
+  if ((!feeds || feeds.length === 0) && !isLoading) {
+    return (
+      <div className="feed-container">
+        <p className="feed-text">Your feed is empty. Set up your circle first.</p>
+        <a href="/circle" style={{ color: '#2563eb' }}>Go to Circle setup →</a>
+      </div>
+    );
+  }
 
   return (
     <div ref={containerRef} className={`feed-container ${!isAnimating ? 'fade-in' : ''}`}>
       {username && (
         <>
           <h1 className="greeting">Hi, {username}</h1>
-          <p className="subheading">Here's your quote:</p>
+          <p className="subheading">Here are your casts:</p>
         </>
       )}
 
       {isLoading ? (
         <p className="feed-text">Loading...</p>
-      ) : currentFeed ? (
-        <article className="feed-card">
-          {currentFeed.imageUrls && currentFeed.imageUrls.length > 0 ? (
-            <div className="feed-images-scroll" role="region" aria-label="cast images">
-              {currentFeed.imageUrls.map((url, idx) => (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img key={`${url}-${idx}`} className="feed-image-thumb" src={url} alt={`cast image ${idx + 1}`} />
-              ))}
-            </div>
-          ) : null}
-          <div className="feed-content">
-            <p className="feed-text">{currentFeed.text}</p>
-            <p className="feed-author">— {currentFeed.author}</p>
-          </div>
-        </article>
-      ) : null}
+      ) : (
+        <>
+          {feeds.map((item, idx) => (
+            <article key={`feed-${idx}`} className="feed-card">
+              {item.imageUrls && item.imageUrls.length > 0 ? (
+                <div className="feed-images-scroll" role="region" aria-label="cast images">
+                  {item.imageUrls.map((url, i) => (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img key={`${url}-${i}`} className="feed-image-thumb" src={url} alt={`cast image ${i + 1}`} />
+                  ))}
+                </div>
+              ) : null}
+              <div className="feed-content">
+                <p className="feed-text">{item.text}</p>
+                <p className="feed-author">— {item.author}</p>
+              </div>
+            </article>
+          ))}
+        </>
+      )}
     </div>
   );
 }
