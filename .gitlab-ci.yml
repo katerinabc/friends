@@ -1,0 +1,13 @@
+stages:
+  - deploy
+
+mirror_to_github:
+  stage: deploy
+  image: alpine/git
+  script:
+    - git remote add github "https://katerinabc:GitHubToken@github.com/katerinabc/friends.git"
+    - git push github --all
+    - git push github --tags
+  only:
+    - main # or the name of your main branch
+

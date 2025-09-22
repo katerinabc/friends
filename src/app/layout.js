@@ -18,8 +18,8 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body className={playfair.variable}>
         <div>
+        <FrameInit />
           {children}
-          <FrameInit />
         </div>
       </body>
     </html>
