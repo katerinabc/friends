@@ -21,3 +21,13 @@ Summary: The mini app fetches a user's following feed and renders a Farcaster-st
 - The feed currently uses the authenticated Farcaster `fid` if available via the mini app context; otherwise a default
 - The app is stable and renders the latest 25 casts; no pagination yet
 
+## Session 2025-09-23
+- Implemented mutuals API: `GET /api/mutuals?fid=...` calling Neynar reciprocal followers, returning `{ items: [...] }` with `fid, username, bio, pfp`.
+- Fixed types for Neynar mutuals (`ReciprocalResponse`, `ReciprocalFollower`) and corrected mapping.
+- Built `CircleSetup.tsx` (client) to fetch mutuals, display a list with toggles, enforce max 5 selections, and persist selections to `localStorage` under `circle:{fid}`.
+- Added `/circle` page to render Circle setup and link back to `/`.
+- Updated `/api/feeds` to return the full feed as `{ items: [...] }` with robust image extraction.
+- Updated `FeedGenerator.tsx` to render a list from `{ items }`, gate fetching until a circle exists, and show an empty-state link to `/circle`.
+- Added minimal CSS for mutuals list and iOS-style toggle.
+- KBC comment: Feed is showing on developer tool. splash screen is creating issues, maybe I'm just too impatient (confirming that if i'd give it more time the splash screen goes away). No images or other embeds (urls, mini-app screen) are showing. error needs a proper fixing not sending the agent to look at it. 
+

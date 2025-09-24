@@ -1,3 +1,4 @@
+//todo: fix images not showing up. Assume the whole API call is bullshit. 
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -32,6 +33,7 @@ export function FeedGenerator() {
       
       const data = await response.json();
       console.log('neynar response', data)
+      console.log('first item images', (data?.items?.[0]?.imageUrls || []).length, data?.items?.[0]?.imageUrls);
 
       const items: Feed[] = Array.isArray(data?.items) ? data.items : [];
       setFeeds(items);
