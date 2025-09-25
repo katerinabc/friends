@@ -38,7 +38,7 @@ export class FetchUserFeed {
                     fid: this.userId,
                     // limit: 25, //25 is defualt anyway
                     // cursor: null,
-                    include_replies: true
+                    include_replies: false
             }
         });
         return response.data.casts;

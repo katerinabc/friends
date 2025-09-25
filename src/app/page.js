@@ -21,12 +21,13 @@ export const metadata = {
     })
   }
 };
-
+// fix formating of nav bar. now both links right after another
 export default function Home() {
   return (
     <main>
-      <nav style={{ marginTop: 12 }}>
+      <nav style={{ marginTop: 12 }}> 
           <Link href="/circle">Set up Friends</Link>
+          <Link href="/intuition">Upload your Intuition</Link>
       </nav>
       <FeedGenerator />
       </main>

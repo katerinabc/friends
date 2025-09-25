@@ -1,6 +1,6 @@
 import axios from 'axios';
 import { AxiosResponse } from 'axios';
-import { ReciprocalResponse } from '../../../types/cast';
+import { ReciprocalResponse, ReciprocalFollower } from '../../../types/cast';
 
 export class FetchReciprocals {
     private readonly apiKey: string;
@@ -19,7 +19,7 @@ export class FetchReciprocals {
     /**
      * @returns Fetch a user's reciprocal followers
      */
-    async getMutuals(): Promise<ReciprocalResponse> { // check this is correct type
+    async getMutuals(): Promise<ReciprocalFollower[]> { // check this is correct type
     try {
         console.log('Neynar request fid:', this.userId);
         const response: AxiosResponse<ReciprocalResponse> = await axios.get(
@@ -36,7 +36,7 @@ export class FetchReciprocals {
                     // cursor: null,
             }
         });
-        return response.data;
+        return response.data.users; // I added the next nested level in here to match structure in feed/routes.ts
 
     } catch (error) {
         if (axios.isAxiosError(error)) {

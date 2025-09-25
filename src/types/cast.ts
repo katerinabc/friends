@@ -1,46 +1,27 @@
 // Types for API responses
+export interface Feed {
+    text: string; author: string; imageUrls?: string[]; timestamp?: string
+}
+
 export interface ReciprocalFollower {
     object: 'reciprocal_follower';
     user: Author;
     timestamp: string;
   }
-  
-  export interface ReciprocalResponse {
+
+  // type returned by api/mutuals/mutuals
+export interface ReciprocalResponse {
     users: ReciprocalFollower[];
     next?: { cursor?: string };
   }
 
-export interface Author {
-    object: 'user';
-    fid: number;
-    username: string;
-    display_name: string;
-    pfp_url: string;
-    follower_count: number;
-    following_count: number;
-    profile?: {
-        bio: {
-            text: string;
-            mentioned_profiles: any[];
-        };
-        location?: {
-            latitude: number;
-            longitude: number;
-            address: {
-                city: string;
-                state: string;
-                country: string;
-                country_code: string;
-            };
-        };
+// type returned by api/feeds/casts
+export interface UserFeedResponse {
+    casts: Cast[];
+    next: {
+        cursor?: string;
     };
-    verified_addresses?: {
-        eth_addresses: string[];
-        sol_addresses: string[];
-    };
-    verified_accounts: any[];
-    power_badge: boolean;
-}
+} 
 
 export interface Cast {
     object: 'cast';
@@ -104,9 +85,34 @@ export interface Cast {
     mentioned_channels_ranges: any[];
 }
 
-export interface UserFeedResponse {
-    casts: Cast[];
-    next: {
-        cursor?: string;
+export interface Author {
+    object: 'user';
+    fid: number;
+    username: string;
+    display_name: string;
+    pfp_url: string;
+    follower_count: number;
+    following_count: number;
+    profile?: {
+        bio: {
+            text: string;
+            mentioned_profiles: any[];
+        };
+        location?: {
+            latitude: number;
+            longitude: number;
+            address: {
+                city: string;
+                state: string;
+                country: string;
+                country_code: string;
+            };
+        };
     };
-} 
+    verified_addresses?: {
+        eth_addresses: string[];
+        sol_addresses: string[];
+    };
+    verified_accounts: any[];
+    power_badge: boolean;
+}

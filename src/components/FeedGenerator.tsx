@@ -1,4 +1,5 @@
 //todo: fix images not showing up. Assume the whole API call is bullshit. 
+// currently api/feeds/route.ts doesn't export images or other embeds
 'use client';
 
 import { useState, useEffect } from 'react';
@@ -19,8 +20,6 @@ export function FeedGenerator() {
   const fetchFeed = async (url?: string) => {
     setIsLoading(true);
     setIsAnimating(true);
-    // const f = (typeof window !== 'undefined' && (window as any).userFid) ?? fid;
-    // const url = f ? `/api/feeds?fid=${f}` : '/api/feeds';
     console.log('GET', url);
     
     try {
@@ -33,7 +32,7 @@ export function FeedGenerator() {
       
       const data = await response.json();
       console.log('neynar response', data)
-      console.log('first item images', (data?.items?.[0]?.imageUrls || []).length, data?.items?.[0]?.imageUrls);
+      // console.log('first item images', (data?.items?.[0]?.imageUrls || []).length, data?.items?.[0]?.imageUrls);
 
       const items: Feed[] = Array.isArray(data?.items) ? data.items : [];
       setFeeds(items);
@@ -131,14 +130,15 @@ export function FeedGenerator() {
         <>
           {feeds.map((item, idx) => (
             <article key={`feed-${idx}`} className="feed-card">
-              {item.imageUrls && item.imageUrls.length > 0 ? (
+              {/* currently api/feeds/routes.ts doesn't export images or other embeds */}
+              {/* {item.imageUrls && item.imageUrls.length > 0 ? (
                 <div className="feed-images-scroll" role="region" aria-label="cast images">
                   {item.imageUrls.map((url, i) => (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img key={`${url}-${i}`} className="feed-image-thumb" src={url} alt={`cast image ${i + 1}`} />
                   ))}
                 </div>
-              ) : null}
+              ) : null} */}
               <div className="feed-content">
                 <p className="feed-text">{item.text}</p>
                 <p className="feed-author">— {item.author}</p>

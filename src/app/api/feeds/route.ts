@@ -14,47 +14,29 @@ export async function GET(req: Request) {
         const service = new FetchUserFeed(fid);
         const casts = await service.getUserFeed();
 
-        const isImageUrl = (url: unknown): url is string =>
-          typeof url === 'string' && /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(url);
+        // const isImageUrl = (url: unknown): url is string =>
+        //   typeof url === 'string' && /\.(png|jpe?g|gif|webp|bmp|svg)(\?|$)/i.test(url);
 
         const items = casts.map((cast: any) => {
           const text = cast?.text || "";
           const author = cast?.author?.username || cast?.author?.display_name || "stranger";
+          const timestamp = cast?.timestamp || "";
 
-          // Support multiple embed shapes from Neynar
-          const embeds: any[] = Array.isArray(cast?.embeds)
-            ? cast.embeds
-            : Array.isArray((cast as any)?.embeds_dehydrated)
-              ? (cast as any).embeds_dehydrated
-              : [];
+          // embeds: images
 
-          // Broaden detection: consider url/source_url/image_url and open_graph fallbacks
-          const candidateUrls: string[] = embeds
-            .flatMap((e: any) => [
-              e?.url,
-              e?.source_url,
-              e?.image_url,
-              e?.metadata?.image,
-              e?.metadata?.open_graph?.image,
-              e?.open_graph?.image,
-            ])
-            .filter(isImageUrl);
+          // embeds: urls
 
-          const uploadedImages: string[] = candidateUrls;
-          const linkPreviewImages: string[] = [];
+          // embeds: mentions
 
-          const seen = new Set<string>();
-          const imageUrls: string[] = [...uploadedImages, ...linkPreviewImages].filter((url) => {
-            if (seen.has(url)) return false;
-            seen.add(url);
-            return true;
-          });
+          // likes, recasts, replies
 
-          return imageUrls.length > 0 ? { text, author, imageUrls } : { text, author };
+          return {text, author, timestamp}
         });
-        console.log('sample images', (items[0]?.imageUrls || []).length, items[0]?.imageUrls);
-
+        
         console.log('[API] /api/feeds url:', req.url, 'fid:', fid, 'items:', items.length);
+        console.log('sample items', items[0], items[1])
+        // console.log('sample images', (items[0]?.imageUrls || []).length, items[0]?.imageUrls);
+
         return Response.json({ items });
     } catch (error) {
         console.error('Error fetching feed:', error);
