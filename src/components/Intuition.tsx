@@ -15,6 +15,7 @@ import { useState, useEffect } from 'react';
 import { Feed } from '@/types/cast';
 import { sdk } from '@farcaster/miniapp-sdk';
 import { useRef } from 'react';
+import Link from 'next/link';
 
 
 export function IntuitionGenerator() {
@@ -89,6 +90,7 @@ export function IntuitionGenerator() {
   }, [feeds])
 
   // fix timestamp formatting. now shown as 2025-09-25T07:06:55.000Z
+  // passing cast text to url makes for a very long url.
   return (
     <div ref={containerRef} className={`feed-container ${!isAnimating ? 'fade-in' : ''}`}>
         {username && (
@@ -109,7 +111,12 @@ export function IntuitionGenerator() {
                         <p className="feed-author">- {item.author}</p>
                         <p className="feed-timestamp"> {item.timestamp}</p>
                     </div>
-                </article>)}
+                    < Link href={`/uploadtrust?text=${item.text}?author=${item.author}`} className="trust-button">
+                        Upload Intuition
+                    </Link>
+                </article>
+                )
+            }
             </>
 
         )}
